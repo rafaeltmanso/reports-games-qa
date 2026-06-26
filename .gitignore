@@ -1,0 +1,6 @@
+# Performance traces são pesados (~50 MB cada) e podem ser regenerados a partir do DevTools.
+# Mantemos só relatórios, screenshots e config no repo.
+**/perf-baseline.json
+**/*.tmp
+.DS_Store
+Thumbs.db
