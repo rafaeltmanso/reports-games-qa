@@ -4,7 +4,7 @@ QA reports for browser games hosted on itch.io, using Chrome DevTools MCP for au
 
 ## Disclaimer
 
-**This is a personal study/portfolio project only.** The author has no professional, commercial, or personal relationship with the games, developers, or publishers mentioned in this repository. All testing was performed on publicly available material on itch.io for the sole purpose of practicing QA methodology and showcasing tooling skills (Chrome DevTools MCP, performance analysis, bug reporting).
+**This is a personal study/portfolio project only.** I have no professional, commercial, or personal relationship with the games, developers, or publishers mentioned in this repository. All testing was performed on publicly available material on itch.io for the sole purpose of practicing QA methodology and showcasing tooling skills (Chrome DevTools MCP, performance analysis, bug reporting).
 
 The games tested are publicly distributed on itch.io (often as free demos or name-your-price downloads) and were tested in their publicly accessible web builds. No private builds, NDAs, betas, or non-public material were accessed. All findings are observational reports based on time-limited testing sessions and should not be treated as exhaustive or authoritative reviews.
 
@@ -17,18 +17,6 @@ If you are a developer of one of the tested games and would like a bug report re
 - **OS:** Windows 10 (Win64)
 - **Hardware:** 20 cores, AMD Radeon RX 6650 XT, 32 GB RAM
 - **Test viewport:** 1280x720 @ DPR 1
-
-## How to run
-
-1. Open opencode in this directory
-2. Provide an itch.io game URL
-3. The 6 standard scenarios are tested:
-   - Initial Load
-   - Fullscreen
-   - Window Resize
-   - Gamepad
-   - Long Session (30 min) - simulated in a short window
-   - Refresh During Gameplay
 
 Each game gets its own subdirectory with screenshots, traces (when applicable), and `REPORT.md`.
 
