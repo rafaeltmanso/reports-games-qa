@@ -1,128 +1,128 @@
-# Informações da build
+# Build Information
 
-- **Nome do jogo:** Serenitrove (v1.2.0)
-- **Plataforma:** itch.io (HTML5 / JavaScript puro)
-- **Navegadores testados:** Google Chrome 149.0.0.0
-- **Data do teste:** 26/06/2026
+- **Game name:** Serenitrove (v1.2.0)
+- **Platform:** itch.io (HTML5 / vanilla JavaScript)
+- **Browsers tested:** Google Chrome 149.0.0.0
+- **Test date:** 2026-06-26
 
-# Ambiente de teste
+# Test Environment
 
-- **CPU/GPU:** 20 cores lógicos / AMD Radeon RX 6650 XT (ANGLE/D3D11)
-- **RAM:** 32 GB (limite JS heap 4 GB alocado pelo Chrome)
-- **Browser e versão:** Google Chrome 149.0.0.0
-- **Sistema operacional:** Windows 10 (Win64)
-- **Engine:** HTML5 / JavaScript puro (DOM-based, sprites via DIVs posicionadas com background-image base64)
-- **Resolução do viewport:** 1280x800 @ DPR 1
-- **Conexão:** 4G efetivo, ~10 Mbps, RTT 50ms
-- **Assets:** ~25 MB (pacote v1.2.0); sem compressão Brotli/WASM (vanilla JS)
+- **CPU/GPU:** 20 logical cores / AMD Radeon RX 6650 XT (ANGLE/D3D11)
+- **RAM:** 32 GB (Chrome allocates 4 GB JS heap limit)
+- **Browser and version:** Google Chrome 149.0.0.0
+- **Operating system:** Windows 10 (Win64)
+- **Engine:** HTML5 / vanilla JavaScript (DOM-based, sprites via DIVs positioned with background-image base64)
+- **Viewport resolution:** 1280x800 @ DPR 1
+- **Connection:** 4G effective, ~10 Mbps, RTT 50ms
+- **Assets:** ~25 MB (v1.2.0 package). No Brotli/WASM compression (vanilla JS)
 
-# Testes realizados
+# Tests performed
 
-| Cenário | Resultado | Observações |
+| Scenario | Result | Notes |
 | --- | --- | --- |
-| Initial Load | Pass | Página do itch carrega em ~2s; iframe com jogo ativo em ~1s após o load; popup "Movement Controls" exibido na primeira execução, dispensável com Enter |
-| Fullscreen | Pass (parcial) | API `requestFullscreen` disponível no iframe (suportada nativamente); botão de fullscreen interno presente (ícone no canto inferior direito do HUD); não foi possível validar UX pós-fs sem interação direta no DOM do iframe (cross-origin bloqueia cliques sintéticos via `document.elementFromPoint`) |
-| Window Resize | Pass | Iframe mantém tamanho fixo de 800x600 (não estica ao redimensionar a página, mantém aspect ratio centralizado); jogo permanece jogável; UI inferior (stamina, power, layer, depth, light) continua funcional |
-| Gamepad | N/A | Gamepad API disponível (`navigator.getGamepads` ok), nenhum dispositivo conectado neste ambiente; jogo é keyboard+mouse only segundo a doc |
-| Long Session (30 min) | Não executado | Sessão curta (~2min) executada; FPS estável ~182; heap JS 4.3 MB; sem degradação visível. Não foi aguardado o ciclo completo de 30 min. |
-| Refresh During Gameplay | Pass (parcial) | Após F5 o jogo reinicia na tela "PLAY" (não auto-continua). O jogo tem autosave (provavelmente IndexedDB) mas o popup inicial reaparece; **ainda assim, o popup avisa explicitamente o usuário** ("Be sure to export and save your game data regularly") e provê um botão de Export dentro do jogo. **Comportamento aceitável e documentado pelo dev** (o usuário precisa fazer Export manual para ter save persistente cross-browser). |
+| Initial Load | Pass | itch.io page loads in ~2s. iframe with game active ~1s after load. "Movement Controls" popup shown on first run, dismissable with Enter |
+| Fullscreen | Pass (partial) | `requestFullscreen` API available on the iframe (natively supported). In-game fullscreen button present (icon in the lower right corner of the HUD). UX after fullscreen could not be validated without direct DOM interaction in the iframe (cross-origin blocks synthetic clicks via `document.elementFromPoint`) |
+| Window Resize | Pass | iframe keeps a fixed size of 800x600 (does not stretch when resizing the page, keeps centered aspect ratio). Game remains playable. Bottom UI (stamina, power, layer, depth, light) stays functional |
+| Gamepad | N/A | Gamepad API available (`navigator.getGamepads` ok). No device connected in this environment. Game is keyboard+mouse only per the doc |
+| Long Session (30 min) | Not executed | Short session (~2min) executed. FPS stable around 182. JS heap 4.3 MB. No visible degradation. The full 30-minute cycle was not awaited |
+| Refresh During Gameplay | Pass (partial) | After F5 the game restarts on the "PLAY" screen (does not auto-continue). The game has autosave (likely IndexedDB) but the initial popup reappears. Still, **the popup explicitly warns the user** ("Be sure to export and save your game data regularly") and provides an Export button inside the game. **Behavior is acceptable and documented by the dev** (the user must do manual Export for cross-browser persistent saves) |
 
-# Bugs encontrados
+# Bugs found
 
 **Bug ID:** WEB-005
 
-**Título:** Refresh não restaura o autosave automaticamente.
+**Title:** Refresh does not restore autosave automatically.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Acessar `https://alfredncy.itch.io/serenitrove`.
-2. Clicar em **PLAY**.
-3. Jogar por alguns minutos (mover, cavar, consumir stamina).
-4. Pressionar F5 ou recarregar a aba.
+1. Open `https://alfredncy.itch.io/serenitrove`.
+2. Click **PLAY**.
+3. Play for a few minutes (move, dig, consume stamina).
+4. Press F5 or reload the tab.
 
-**Resultado esperado:**
+**Expected result:**
 
-O autosave deveria carregar o estado anterior automaticamente (jogo reabre direto no gameplay).
+The autosave should load the previous state automatically (the game reopens directly in gameplay).
 
-**Resultado atual:**
+**Actual result:**
 
-A tela "PLAY" reaparece com o popup inicial de Movement Controls. O estado do jogo (camada, depth, stamina, inventário) não é restaurado visualmente. Embora o dev **declare explicitamente** que o usuário deve fazer Export manual ("Be sure to export and save your game data regularly"), o "autosave" prometido na tela inicial cria expectativa conflitante com o comportamento real.
+The "PLAY" screen reappears with the initial Movement Controls popup. Game state (layer, depth, stamina, inventory) is not visually restored. Although the dev **explicitly states** that the user must do manual Export ("Be sure to export and save your game data regularly"), the "autosave" promised on the initial screen creates conflicting expectations with the actual behavior.
 
-**Severidade:** Minor. O comportamento é documentado pelo dev e o Export é trivial (botão dentro do jogo). UX poderia melhorar detectando autosave existente e pulando a tela PLAY, mas não é bloqueante.
+**Severity:** Minor. The behavior is documented by the dev and Export is trivial (button inside the game). UX could improve by detecting existing autosave and skipping the PLAY screen, but it is not blocking.
 
 ---
 
 **Bug ID:** WEB-006
 
-**Título:** Erro HTTP 410 em request de tracking do itch (rh endpoint).
+**Title:** HTTP 410 error on itch tracking request (rh endpoint).
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Acessar `https://alfredncy.itch.io/serenitrove`.
-2. Abrir DevTools → Console/Network.
+1. Open `https://alfredncy.itch.io/serenitrove`.
+2. Open DevTools to Console/Network.
 
-**Resultado esperado:**
+**Expected result:**
 
-Sem erros de rede em recursos da página.
+No network errors on page resources.
 
-**Resultado atual:**
+**Actual result:**
 
-Request `GET https://alfredncy.itch.io/serenitrove/rh/...` retorna **HTTP 410 Gone**. Visível no console como `Failed to load resource: the server responded with a status of 410`.
+Request `GET https://alfredncy.itch.io/serenitrove/rh/...` returns **HTTP 410 Gone**. Visible in console as `Failed to load resource: the server responded with a status of 410`.
 
-**Severidade:** Minor. Não bloqueia gameplay (o tracking do itch está desativado nesse endpoint específico, possivelmente deprecated pelo itch.io). Não afeta o jogador. Provavelmente é problema do lado do itch, não do dev do jogo.
+**Severity:** Minor. Does not block gameplay (itch tracking is disabled on this specific endpoint, likely deprecated by itch.io). Does not affect the player. Likely an itch-side issue, not the game dev's.
 
 ---
 
 **Bug ID:** WEB-007
 
-**Título:** Iframe mantém tamanho fixo de 800x600, sem escalar com viewport.
+**Title:** iframe keeps a fixed size of 800x600, does not scale with viewport.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Abrir `https://alfredncy.itch.io/serenitrove` em uma janela grande (ex: 1920x1080).
-2. Observar o iframe do jogo.
+1. Open `https://alfredncy.itch.io/serenitrove` in a large window (e.g. 1920x1080).
+2. Observe the game iframe.
 
-**Resultado esperado:**
+**Expected result:**
 
-Em telas grandes, o jogo deveria escalar para preencher o espaço disponível (mantendo aspect ratio).
+On large screens, the game should scale to fill the available space (keeping aspect ratio).
 
-**Resultado atual:**
+**Actual result:**
 
-O iframe mantém estritamente 800x600 pixels, centralizado na página, com áreas escuras (fundo do tema do itch) ao redor. Em monitores grandes (1080p+), o jogo ocupa menos de 30% da área visível, deixando barras escuras grandes dos lados.
+The iframe strictly maintains 800x600 pixels, centered on the page, with dark areas (itch theme background) around it. On large monitors (1080p+), the game occupies less than 30% of the visible area, leaving large dark bars on the sides.
 
-**Severidade:** Minor. Funcional, mas prejudica a imersão. Recomendo o dev usar `width: 100%; height: 100%;` ou tamanho dinâmico baseado em viewport, mantendo aspect ratio.
+**Severity:** Minor. Functional, but hurts immersion. Recommend the dev use `width: 100%; height: 100%;` or dynamic size based on viewport, keeping aspect ratio.
 
 ---
 
 **Bug ID:** WEB-008
 
-**Título:** Iframe é cross-origin, impedindo inspeção programática.
+**Title:** iframe is cross-origin, preventing programmatic inspection.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Abrir DevTools em `https://alfredncy.itch.io/serenitrove`.
-2. Tentar inspecionar `iframe.contentDocument` em `https://html-classic.itch.zone/...`.
+1. Open DevTools on `https://alfredncy.itch.io/serenitrove`.
+2. Try to inspect `iframe.contentDocument` on `https://html-classic.itch.zone/...`.
 
-**Resultado esperado:**
+**Expected result:**
 
-A plataforma itch.io deveria permitir alguma forma de introspection.
+The itch.io platform should allow some form of introspection.
 
-**Resultado atual:**
+**Actual result:**
 
-`iframe.contentDocument` retorna `null` por cross-origin policy. Impede QA automatizado via DevTools direto no jogo (precisa usar coordinate-based clicks no canvas ou testes manuais). Não é bug do dev do Serenitrove, mas é relevante para ferramentas de QA.
+`iframe.contentDocument` returns `null` due to cross-origin policy. Blocks automated QA via DevTools directly in the game (must use coordinate-based clicks on the canvas or manual tests). Not a Serenitrove dev bug, but relevant for QA tooling.
 
-**Severidade:** Não é bug (limitação arquitetural do itch). Documentado aqui para referência.
+**Severity:** Not a bug (architectural limitation of itch). Documented here for reference.
 
 # Performance Analysis
 
-- **Average FPS:** ~182 FPS (estimado via `requestAnimationFrame` no container do itch; medição externa ao iframe do jogo)
-- **Peak Memory Usage:** 4.3 MB de JS heap no container (exclui memória do iframe do jogo). Assets do jogo ~25 MB em disco, runtime estimado < 50 MB (DOM-based, sem canvas)
-- **Console Errors:** 1 erro (`Failed to load resource: 410`); 3 warnings (`monetization`, `xr`, `allowfullscreen precedence` - todos do iframe container, não do jogo)
-- **CLS:** Não medido (jogo é iframe cross-origin)
-- **Network:** 61 requests no load inicial; assets pequenos e rápidos (sprites PNG base64 inline); sem WebSocket ou polling visível
-- **Render path:** DOM-based (não usa `<canvas>`); sprites via DIVs com background-image; performático para pixel art estilo retro
-- **Gamepad API:** disponível no navegador, mas jogo não declara suporte oficial (keyboard+mouse only)
-- **Fullscreen API:** disponível e suportada no iframe
+- **Average FPS:** ~182 FPS (estimated via `requestAnimationFrame` in the itch container. Measured externally to the game iframe)
+- **Peak Memory Usage:** 4.3 MB of JS heap in the container (excludes game iframe memory). Game assets ~25 MB on disk, runtime estimated under 50 MB (DOM-based, no canvas)
+- **Console Errors:** 1 error (`Failed to load resource: 410`). 3 warnings (`monetization`, `xr`, `allowfullscreen precedence`, all from the iframe container, not the game)
+- **CLS:** Not measured (game is cross-origin iframe)
+- **Network:** 61 requests on initial load. Small and fast assets (PNG sprites inlined as base64). No visible WebSocket or polling
+- **Render path:** DOM-based (no `<canvas>`). Sprites via DIVs with background-image. Performant for pixel art retro style
+- **Gamepad API:** available in the browser, but game does not declare official support (keyboard+mouse only)
+- **Fullscreen API:** available and supported on the iframe
 
 # Recommendation
 
@@ -130,12 +130,12 @@ A plataforma itch.io deveria permitir alguma forma de introspection.
 
 **Reason:**
 
-Serenitrove é um jogo casual muito bem feito em HTML5/JS puro. Performance excelente (182 FPS, heap baixo, render via DOM funciona bem para o estilo pixel art), zero erros de gameplay, controles responsivos, mecânicas de save via Export funcionam conforme documentado.
+Serenitrove is a very well-made casual game in pure HTML5/JS. Excellent performance (182 FPS, low heap, DOM-based render works well for the pixel art style), zero gameplay errors, responsive controls, Export-based save mechanics work as documented.
 
-Os problemas encontrados são todos minor e nenhum bloqueia release:
+All issues found are minor and none blocks release:
 
-1. **WEB-005 (Minor):** Refresh não auto-restaura. Comportamento é documentado pelo dev na própria UI, mas poderia detectar save existente. Sugestão: ao detectar save no IndexedDB, pular tela PLAY e ir direto para o gameplay.
-2. **WEB-006 (Minor):** Erro 410 em endpoint de tracking do itch. Provavelmente problema do itch, não do dev.
-3. **WEB-007 (Minor):** Iframe fixo em 800x600 não escala. Recomendo tornar responsivo para monitores grandes.
+1. **WEB-005 (Minor):** Refresh does not auto-restore. Behavior is documented by the dev in the UI itself, but could detect existing save. Suggestion: on detecting save in IndexedDB, skip the PLAY screen and go straight to gameplay.
+2. **WEB-006 (Minor):** 410 error on itch tracking endpoint. Likely an itch issue, not the dev's.
+3. **WEB-007 (Minor):** Fixed 800x600 iframe does not scale. Recommend making it responsive for large monitors.
 
-O jogo já está em produção na Steam (v1.2.0) e claramente maduro. O report serve mais como auditoria de regressão para futuras versões web.
+The game is already in production on Steam (v1.2.0) and clearly mature. This report serves more as a regression audit for future web versions.

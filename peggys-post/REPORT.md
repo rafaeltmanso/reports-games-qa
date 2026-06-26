@@ -1,75 +1,75 @@
-# Informações da build
+# Build Information
 
-- **Nome do jogo:** Peggy's Post (v1.5.9)
-- **Plataforma:** itch.io (HTML5 / Unity WebGL)
-- **Navegadores testados:** Google Chrome 149.0.0.0
-- **Data do teste:** 26/06/2026
+- **Game name:** Peggy's Post (v1.5.9)
+- **Platform:** itch.io (HTML5 / Unity WebGL)
+- **Browsers tested:** Google Chrome 149.0.0.0
+- **Test date:** 2026-06-26
 
-# Ambiente de teste
+# Test Environment
 
-- **CPU/GPU:** 20 cores lógicos / AMD Radeon RX 6650 XT (ANGLE/D3D11)
-- **RAM:** 32 GB (limite JS heap 4 GB alocado pelo Chrome)
-- **Browser e versão:** Google Chrome 149.0.0.0
-- **Sistema operacional:** Windows 10 (Win64)
-- **Engine:** Unity 2021.3.15f1 (WebGL 2.0, OpenGL ES 3.0, Built-in Render Pipeline + Postprocessing Stack v2)
-- **Resolução do viewport:** 1280x720 @ DPR 1
-- **Conexão:** 4G efetivo, ~10 Mbps, RTT 50ms
-- **Assets WebGL:** ~67 MB Windows build (~67 MB WebGL total; página do itch mede ~25 MB no DOM, jogo Unity pesa mais após iframe)
+- **CPU/GPU:** 20 logical cores / AMD Radeon RX 6650 XT (ANGLE/D3D11)
+- **RAM:** 32 GB (Chrome allocates 4 GB JS heap limit)
+- **Browser and version:** Google Chrome 149.0.0.0
+- **Operating system:** Windows 10 (Win64)
+- **Engine:** Unity 2021.3.15f1 (WebGL 2.0, OpenGL ES 3.0, Built-in Render Pipeline plus Postprocessing Stack v2)
+- **Viewport resolution:** 1280x720 @ DPR 1
+- **Connection:** 4G effective, ~10 Mbps, RTT 50ms
+- **WebGL assets:** ~67 MB Windows build (~67 MB total WebGL. itch.io page measures ~25 MB in the DOM, Unity game weighs more after iframe)
 
-# Testes realizados
+# Tests performed
 
-| Cenário | Resultado | Observações |
+| Scenario | Result | Notes |
 | --- | --- | --- |
-| Initial Load | Pass | Página do itch em ~2s; clique em Run game abre iframe do Unity; **boot completo do Unity leva ~30s** (WebGL 2021 com Postprocessing pesado); após boot, exibe menu do manual aberto mostrando regras de envio e starter stamp pack |
-| Fullscreen | Pass (parcial) | API fullscreen disponível; botão de fullscreen presente na barra inferior do template Unity; não foi possível validar UX pós-fullscreen via clique direto no iframe (cross-origin bloqueia cliques sintéticos, requer interação manual) |
-| Window Resize | Pass | Jogo continua renderizando corretamente após resize de 1280x720 para 1024x768; layout permanece intacto, parcel na mesa e cliente visíveis |
-| Gamepad | N/A | Gamepad API disponível, nenhum device conectado neste ambiente; jogo é mouse + keyboard only segundo a doc |
-| Long Session (30 min) | Não executado | Sessão curta (~2min) executada; FPS estável ~172; heap JS 6.7 MB; sem degradação observada. Não foi aguardado o ciclo completo de 30 min. |
-| Refresh During Gameplay | Fail | F5/reload zera o iframe do Unity (recarrega do zero); botão "Run game" reaparece; jogador precisa esperar os ~30s de boot novamente. Save local (IndexedDB) não restaura automaticamente. **Mesmo problema já conhecido do FEED THE AI**, ambos Unity WebGL itch.io. |
+| Initial Load | Pass | itch.io page in ~2s. Click on Run game opens the Unity iframe. **Full Unity boot takes ~30s** (WebGL 2021 with heavy Postprocessing). After boot, displays an open manual menu showing shipping rules and starter stamp pack |
+| Fullscreen | Pass (partial) | Fullscreen API available. Fullscreen button present on the Unity template's bottom bar. UX after fullscreen could not be validated via direct click on the iframe (cross-origin blocks synthetic clicks, requires manual interaction) |
+| Window Resize | Pass | Game keeps rendering correctly after resize from 1280x720 to 1024x768. Layout stays intact, parcel on the desk and customer visible |
+| Gamepad | N/A | Gamepad API available, no device connected in this environment. Game is mouse + keyboard only per the doc |
+| Long Session (30 min) | Not executed | Short session (~2min) executed. FPS stable around 172. JS heap 6.7 MB. No visible degradation. The full 30-minute cycle was not awaited |
+| Refresh During Gameplay | Fail | F5/reload wipes the Unity iframe (reloads from scratch). "Run game" button reappears. The player must wait the ~30s boot again. Local save (IndexedDB) does not auto-restore. **Same issue already known from FEED THE AI**, both Unity WebGL on itch.io |
 
-# Bugs encontrados
+# Bugs found
 
 **Bug ID:** WEB-009
 
-**Título:** Refresh durante gameplay descarta todo o estado do jogo.
+**Title:** Refresh during gameplay discards the entire game state.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Acessar `https://digitarium.itch.io/peggys-post`.
-2. Clicar em **Run game**.
-3. Aguardar os ~30s de boot do Unity WebGL.
-4. Clicar em **Next** (ou pressionar D) para começar a receber clientes.
-5. Pressionar F5 ou recarregar a aba.
+1. Open `https://digitarium.itch.io/peggys-post`.
+2. Click **Run game**.
+3. Wait the ~30s Unity WebGL boot.
+4. Click **Next** (or press D) to start receiving customers.
+5. Press F5 or reload the tab.
 
-**Resultado esperado:**
+**Expected result:**
 
-Save local (IndexedDB) deveria persistir o estado do jogo entre reloads.
+Local save (IndexedDB) should persist game state between reloads.
 
-**Resultado atual:**
+**Actual result:**
 
-A página volta para a landing do itch.io com o botão **Run game** visível. O iframe do Unity é completamente recriado, perdendo qualquer estado em memória. O console mostra `[UnityCache] Failed to load '.../Peggy's%20Post.data.unityweb' from indexedDB cache due to the error: Error: Could not connect to database.` no primeiro load, indicando que o cache de assets nem consegue inicializar corretamente. O boot completo leva ~30s a cada refresh.
+The page returns to the itch.io landing page with the **Run game** button visible. The Unity iframe is completely recreated, losing any state in memory. Console shows `[UnityCache] Failed to load '.../Peggy's%20Post.data.unityweb' from indexedDB cache due to the error: Error: Could not connect to database.` on first load, indicating that even the asset cache cannot initialize correctly. Full boot takes ~30s per refresh.
 
-**Severidade:** Major. Similar ao WEB-001 (FEED THE AI). Ambos Unity WebGL no itch.io sofrem do mesmo problema: o `autoSyncPersistentDataPath` provavelmente não está habilitado, e o IndexedDB não está sendo usado para save de estado. O dev tem uma feature de "save slots" no jogo (v1.5.2), mas isso só funciona dentro da sessão atual.
+**Severity:** Major. Similar to WEB-001 (FEED THE AI). Both Unity WebGL on itch.io suffer from the same problem: `autoSyncPersistentDataPath` is likely not enabled, and IndexedDB is not being used for state saves. The dev has a "save slots" feature in the game (v1.5.2), but it only works within the current session.
 
 ---
 
 **Bug ID:** WEB-010
 
-**Título:** Shaders de Postprocessing sem fallback para esta GPU.
+**Title:** Postprocessing shaders without fallback for this GPU.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Acessar `https://digitarium.itch.io/peggys-post`.
-2. Clicar em Run game.
-3. Abrir DevTools → Console.
+1. Open `https://digitarium.itch.io/peggys-post`.
+2. Click Run game.
+3. Open DevTools to Console.
 
-**Resultado esperado:**
+**Expected result:**
 
-Sem `ERROR: Shader` no console.
+No `ERROR: Shader` in console.
 
-**Resultado atual:**
+**Actual result:**
 
-Quatro shaders de Postprocessing Stack v2 (compatível com Unity 2021.3 builtin pipeline) não rodam na GPU:
+Four Postprocessing Stack v2 shaders (compatible with Unity 2021.3 builtin pipeline) do not run on the GPU:
 - `Hidden/PostProcessing/Debug/Histogram`
 - `Hidden/PostProcessing/Debug/LightMeter`
 - `Hidden/PostProcessing/Debug/Vectorscope`
@@ -77,100 +77,100 @@ Quatro shaders de Postprocessing Stack v2 (compatível com Unity 2021.3 builtin 
 - `Hidden/PostProcessing/MultiScaleVO`
 - `Hidden/PostProcessing/ScreenSpaceReflections`
 
-Mensagem: `none of subshaders/fallbacks are suitable` em cada um.
+Message: `none of subshaders/fallbacks are suitable` on each.
 
-**Severidade:** Minor. Shaders de Debug não afetam gameplay normal (são usados para ferramentas de dev). MultiScaleVO e ScreenSpaceReflections são de produção, mas como o jogo está em builtin pipeline (não URP/HDRP), esses efeitos provavelmente não estão ativos em gameplay normal. Não bloqueia release.
+**Severity:** Minor. Debug shaders do not affect normal gameplay (used for dev tools). MultiScaleVO and ScreenSpaceReflections are production, but since the game is on builtin pipeline (not URP/HDRP), these effects are probably not active in normal gameplay. Does not block release.
 
 ---
 
 **Bug ID:** WEB-011
 
-**Título:** Warning repetido 10945 vezes sobre Postprocessing package.
+**Title:** Warning repeated 10945 times about Postprocessing package.
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Bootar o jogo.
-2. Observar console.
+1. Boot the game.
+2. Observe console.
 
-**Resultado esperado:**
+**Expected result:**
 
-Sem warnings repetidos.
+No repeated warnings.
 
-**Resultado atual:**
+**Actual result:**
 
-`When used with builtin render pipeline, Postprocessing package expects to be used on a fullscreen Camera. Please note that using Camera viewport may result in visual artefacts or some things not working.` aparece **1774 vezes** + **9171 vezes** = **10945 vezes** total. Indica que o jogo está usando o Postprocessing package com Camera viewport em vez de fullscreen, e o engine dispara o warning a cada frame para cada camera afetada.
+`When used with builtin render pipeline, Postprocessing package expects to be used on a fullscreen Camera. Please note that using Camera viewport may result in visual artefacts or some things not working.` appears **1774 times** plus **9171 times** = **10945 times** total. Indicates that the game is using the Postprocessing package with Camera viewport instead of fullscreen, and the engine fires the warning every frame for each affected camera.
 
-**Severidade:** Minor. Funcional (jogo roda), mas polui o console e pode indicar degradação de performance sutil (cada warning = log call). Recomendo o dev ajustar a Camera do Postprocessing para usar fullscreen ou desabilitar o warning deprecation.
+**Severity:** Minor. Functional (game runs), but pollutes the console and may indicate subtle performance degradation (each warning = log call). Recommend the dev adjust the Postprocessing Camera to use fullscreen or disable the deprecation warning.
 
 ---
 
 **Bug ID:** WEB-012
 
-**Título:** Iframe do jogo é maior que o viewport (1300x800 em janela 1280x720).
+**Title:** Game iframe is larger than the viewport (1300x800 in a 1280x720 window).
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Abrir `https://digitarium.itch.io/peggys-post` em uma janela de 1280x720.
-2. Observar o iframe do jogo.
+1. Open `https://digitarium.itch.io/peggys-post` in a 1280x720 window.
+2. Observe the game iframe.
 
-**Resultado esperado:**
+**Expected result:**
 
-O iframe deveria caber na viewport com alguma margem, ou scroll deveria ser natural.
+The iframe should fit in the viewport with some margin, or scrolling should be natural.
 
-**Resultado atual:**
+**Actual result:**
 
-O iframe do Unity é fixado em 1300x800 pixels, criando barras de scroll horizontal e vertical em janelas menores. A página do itch também é enorme (19724px de altura total) porque o iframe está inline no meio do layout, forçando o usuário a scrollar para interagir com partes do jogo. Jogar em tela cheia ajuda, mas prejudica quem joga em janela.
+The Unity iframe is fixed at 1300x800 pixels, creating horizontal and vertical scroll bars in smaller windows. The itch.io page is also huge (19724px of total height) because the iframe is inline in the middle of the layout, forcing the user to scroll to interact with parts of the game. Playing in fullscreen helps, but hurts users who play in a window.
 
-**Severidade:** Minor. Recomendo usar CSS responsivo (`max-width: 100%; height: auto;`) e/ou detectar viewport e ajustar dinamicamente.
+**Severity:** Minor. Recommend using responsive CSS (`max-width: 100%; height: auto;`) and/or detecting viewport and adjusting dynamically.
 
 ---
 
 **Bug ID:** WEB-013
 
-**Título:** Erro HTTP 410 em endpoint de tracking do itch (rh endpoint).
+**Title:** HTTP 410 error on itch tracking endpoint (rh endpoint).
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. Acessar `https://digitarium.itch.io/peggys-post`.
-2. Abrir DevTools → Network/Console.
+1. Open `https://digitarium.itch.io/peggys-post`.
+2. Open DevTools to Network/Console.
 
-**Resultado esperado:**
+**Expected result:**
 
-Sem erros de rede em recursos do itch.
+No network errors on itch resources.
 
-**Resultado atual:**
+**Actual result:**
 
-Request `GET https://digitarium.itch.io/peggys-post/rh/...` retorna **HTTP 410 Gone**. Console exibe `Failed to load resource: the server responded with a status of 410`.
+Request `GET https://digitarium.itch.io/peggys-post/rh/...` returns **HTTP 410 Gone**. Console shows `Failed to load resource: the server responded with a status of 410`.
 
-**Severidade:** Minor. Idêntico ao WEB-006 (Serenitrove). Provavelmente problema deprecated do lado do itch, não do dev do Peggy's Post.
+**Severity:** Minor. Identical to WEB-006 (Serenitrove). Likely deprecated on itch's side, not the Peggy's Post dev's.
 
 # Performance Analysis
 
-- **Average FPS:** ~172 FPS (estimado via `requestAnimationFrame` no container do itch)
-- **Peak Memory Usage:** ~6.7 MB de JS heap no container (exclui memória do Unity WASM que pode chegar a 1-2 GB); jogo Unity pesado, recomenda-se 4 GB+ de RAM para jogadores
-- **Console Errors:** 1 erro real (410 Gone); ~6 erros de Shader classificados como ERROR pelo Unity logger (mas são funcionalmente warnings); **10945 warnings de Postprocessing Camera** (problema de logging excessivo)
-- **Boot Time:** ~30 segundos para Unity WebGL inicializar completamente com Postprocessing (pode ser muito longo para jogadores casuais)
-- **Network:** Requisições Unity (.data.br, .wasm.br, .framework.js.br) com Brotli habilitado
-- **Render path:** WebGL 2.0 + Unity Built-in Render Pipeline + Postprocessing Stack v2
-- **Gamepad API:** disponível mas não suportada pelo jogo
-- **Fullscreen API:** disponível e suportada
+- **Average FPS:** ~172 FPS (estimated via `requestAnimationFrame` in the itch container)
+- **Peak Memory Usage:** ~6.7 MB of JS heap in the container (excludes Unity WASM memory which can reach 1 to 2 GB). Heavy Unity game, recommend 4 GB+ RAM for players
+- **Console Errors:** 1 real error (410 Gone). ~6 shader errors classified as ERROR by Unity logger (but functionally warnings). **10945 warnings about Postprocessing Camera** (excessive logging issue)
+- **Boot Time:** ~30 seconds for Unity WebGL to fully initialize with Postprocessing (may be too long for casual players)
+- **Network:** Unity requests (`.data.br`, `.wasm.br`, `.framework.js.br`) with Brotli enabled
+- **Render path:** WebGL 2.0 plus Unity Built-in Render Pipeline plus Postprocessing Stack v2
+- **Gamepad API:** available but not supported by the game
+- **Fullscreen API:** available and supported
 
 # Recommendation
 
-**Needs Fixes Before Release** (com ressalvas)
+**Needs Fixes Before Release** (with caveats)
 
 **Reason:**
 
-Peggy's Post é um jogo lindíssimo com mecânicas complexas (gestão de post office, sistema de stamps, multiple morality paths), mas tem problemas claros de otimização e UX que devem ser endereçados antes de uma release oficial na web:
+Peggy's Post is a beautiful game with complex mechanics (post office management, stamp system, multiple morality paths), but has clear optimization and UX issues that should be addressed before an official web release:
 
-1. **WEB-009 (Major):** Refresh zera o estado. Mesmo problema do FEED THE AI. É um padrão do Unity WebGL + itch.io: o cache do IndexedDB para assets não funciona bem (`Could not connect to database`), e saves de estado não persistem entre reloads. Recomendação: implementar save exportável (similar ao Serenitrove, que tem Export funcional) ou pelo menos habilitar `autoSyncPersistentDataPath` no Unity. O dev já tem save slots no jogo (v1.5.2+), então pode estender essa mecânica para incluir export.
+1. **WEB-009 (Major):** Refresh wipes state. Same problem as FEED THE AI. This is a standard Unity WebGL plus itch.io pattern: the IndexedDB asset cache does not work well (`Could not connect to database`), and state saves do not persist between reloads. Recommendation: implement exportable save (similar to Serenitrove, which has functional Export) or at least enable `autoSyncPersistentDataPath` in Unity. The dev already has save slots in the game (v1.5.2+), so they could extend that mechanic to include export.
 
-2. **WEB-011 (Minor):** 10945 warnings repetidos no console. Não afeta gameplay mas prejudica QA tooling e provavelmente degrada performance marginalmente. Ajustar Camera do Postprocessing.
+2. **WEB-011 (Minor):** 10945 repeated warnings in console. Does not affect gameplay but hurts QA tooling and likely degrades performance marginally. Adjust the Postprocessing Camera.
 
-3. **WEB-010 (Minor):** Shaders de Postprocessing sem fallback. Recomendo testar em mais GPUs.
+3. **WEB-010 (Minor):** Postprocessing shaders without fallback. Recommend testing on more GPUs.
 
-4. **WEB-012 (Minor):** Iframe 1300x800 não cabe em janelas comuns. Torna o jogo difícil de jogar sem fullscreen.
+4. **WEB-012 (Minor):** 1300x800 iframe does not fit common viewports. Makes the game hard to play without fullscreen.
 
-5. **WEB-013 (Minor):** Erro 410 do itch. Idêntico ao WEB-006.
+5. **WEB-013 (Minor):** itch 410 error. Identical to WEB-006.
 
-Peggy's Post tem mecânicas sólidas e visuais encantadores. O dev tem comunidade ativa no Discord e responde rápido a reports. Esses fixes são todos polimento (exceto WEB-009) e podem ser endereçados em uma v1.6.x.
+Peggy's Post has solid mechanics and charming visuals. The dev has an active Discord community and responds quickly to reports. These fixes are all polish (except WEB-009) and can be addressed in a v1.6.x.

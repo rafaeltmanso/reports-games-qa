@@ -1,57 +1,57 @@
 # Game QA Report Template
 
-Use este template como ponto de partida para novos relatórios de QA de jogos web.
+Use this template as a starting point for new web game QA reports.
 
 ```markdown
-# Informações da build
+# Build Information
 
-- **Nome do jogo:** [Nome + versão]
-- **Plataforma:** [itch.io URL]
-- **Navegadores testados:** [Chrome 149, Firefox, Edge, etc]
-- **Data do teste:** [YYYY-MM-DD]
+- **Game name:** [Name + version]
+- **Platform:** [itch.io URL]
+- **Browsers tested:** [Chrome 149, Firefox, Edge, etc]
+- **Test date:** [YYYY-MM-DD]
 
-# Ambiente de teste
+# Test Environment
 
-- **CPU/GPU:** [ex: 20 cores / AMD Radeon RX 6650 XT]
-- **RAM:** [ex: 32 GB]
-- **Browser e versão:** [ex: Google Chrome 149.0.0.0]
-- **Sistema operacional:** [ex: Windows 10 (Win64)]
-- **Engine:** [ex: Unity 6000.3.3f1 WebGL 2.0 / HTML5+JS vanilla / etc]
-- **Resolução do viewport:** [ex: 1280x720 @ DPR 1]
-- **Conexão:** [ex: 4G efetivo, ~10 Mbps, RTT 50ms]
-- **Assets:** [ex: ~74 MB total (.br Brotli)]
+- **CPU/GPU:** [e.g. 20 cores / AMD Radeon RX 6650 XT]
+- **RAM:** [e.g. 32 GB]
+- **Browser and version:** [e.g. Google Chrome 149.0.0.0]
+- **Operating system:** [e.g. Windows 10 (Win64)]
+- **Engine:** [e.g. Unity 6000.3.3f1 WebGL 2.0 / HTML5+JS vanilla / etc]
+- **Viewport resolution:** [e.g. 1280x720 @ DPR 1]
+- **Connection:** [e.g. 4G effective, ~10 Mbps, RTT 50ms]
+- **Assets:** [e.g. ~74 MB total (.br Brotli)]
 
-# Testes realizados
+# Tests performed
 
-| Cenário | Resultado | Observações |
+| Scenario | Result | Notes |
 | --- | --- | --- |
-| Initial Load | Pass | [Detalhes] |
-| Fullscreen | Pass (parcial) | [Detalhes] |
-| Window Resize | Pass | [Detalhes] |
-| Gamepad | N/A | [Sem device conectado] |
-| Long Session (30 min) | Não executado | [Sessão curta ~Xmin] |
-| Refresh During Gameplay | Fail | [Detalhes] |
+| Initial Load | Pass | [Details] |
+| Fullscreen | Pass (partial) | [Details] |
+| Window Resize | Pass | [Details] |
+| Gamepad | N/A | [No device connected] |
+| Long Session (30 min) | Not executed | [Short session ~Xmin] |
+| Refresh During Gameplay | Fail | [Details] |
 
-# Bugs encontrados
+# Bugs found
 
 **Bug ID:** WEB-XXX
 
-**Título:** [Descrição curta]
+**Title:** [Short description]
 
-**Passos para reproduzir:**
+**Steps to reproduce:**
 
-1. [Passo 1]
-2. [Passo 2]
+1. [Step 1]
+2. [Step 2]
 
-**Resultado esperado:**
+**Expected result:**
 
-[O que deveria acontecer]
+[What should happen]
 
-**Resultado atual:**
+**Actual result:**
 
-[O que acontece]
+[What happens]
 
-**Severidade:** [Major / Minor / Blocker]
+**Severity:** [Major / Minor / Blocker]
 
 ---
 
@@ -59,7 +59,7 @@ Use este template como ponto de partida para novos relatórios de QA de jogos we
 
 - **Average FPS:** ~XXX FPS
 - **Peak Memory Usage:** ~XX MB
-- **Console Errors:** [número e tipos]
+- **Console Errors:** [number and types]
 - **Network:** [X requests, ~XX MB]
 - **Render path:** [WebGL 2.0 + URP / DOM-based / etc]
 
@@ -69,14 +69,13 @@ Use este template como ponto de partida para novos relatórios de QA de jogos we
 
 **Reason:**
 
-[Resumo dos achados principais]
+[Summary of main findings]
 ```
 
-## Convenções
+## Conventions
 
-- Use `Bug ID: WEB-XXX` para numeração sequencial
-- Severidade: Blocker (impede uso) > Major (perda significativa de funcionalidade) > Minor (polimento)
-- Não use em-dashes (`—`) - substitua por ponto final ou estrutura diferente
-- Sempre incluir screenshot no diretório do jogo para cada cenário testado
-- Performance trace deve ser salvo em `perf-baseline.json` quando coletado
-```
+- Use `Bug ID: WEB-XXX` for sequential numbering
+- Severity: Blocker (prevents use) > Major (significant loss of functionality) > Minor (polish)
+- Do not use em-dashes (`-`) as standalone separators. Use periods, semicolons, or restructure the sentence.
+- Always include a screenshot in the game directory for each tested scenario
+- Performance traces should be saved as `perf-baseline.json` when collected
